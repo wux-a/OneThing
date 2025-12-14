@@ -20,7 +20,14 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+            echo "Using npm ci (lockfile present)"
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            echo "No lockfile found — using npm install"
+            npm install --prefer-offline --no-audit --no-fund
+          fi
 
       - name: Build
         run: npm run build
